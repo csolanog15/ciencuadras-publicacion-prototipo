@@ -46,7 +46,16 @@
 
 <div id="step2" class="step">
 <h2 class="section-title">Descripcion con IA</h2>
-<div class="ai-card"><h3 style="margin-bottom:8px">Descripcion generada</h3><p id="aiDesc">Haz clic en Regenerar para crear una descripcion atractiva.</p><button class="btn-regenerar" onclick="generateDesc()">&#x21bb; Regenerar</button></div>
+<div class="ai-card" id="aiCard">
+<h3 style="margin-bottom:8px">Descripcion generada</h3>
+<div id="aiDescContainer"><p id="aiDesc">Haz clic en Regenerar para crear una descripcion atractiva.</p></div>
+<div id="aiCardButtons" style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+<button class="btn-regenerar" onclick="regenerateDesc()">&#x21bb; Regenerar</button>
+<button onclick="editDesc()" style="background:white; color:#3e98cc; border:2px solid #3e98cc; padding:8px 20px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">&#9998; Editar</button>
+<button onclick="acceptDesc()" style="background:#28a745; color:white; border:none; padding:8px 20px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">&#10003; Aceptar descripcion</button>
+</div>
+<div id="aiAcceptedMsg" style="display:none; margin-top:10px; color:#28a745; font-weight:600; font-size:13px;">Descripcion aceptada &#10003;</div>
+</div>
 <h2 class="section-title">Caracteristicas</h2>
 <div class="chips" id="featureChips">
 <button class="chip">Ascensor</button><button class="chip">Piscina</button><button class="chip">Gimnasio</button><button class="chip">BBQ</button><button class="chip">Seguridad</button><button class="chip">Jardin</button><button class="chip">Balcon</button><button class="chip">Closets</button>
@@ -64,7 +73,7 @@
 <div class="form-group"><label>Nombre</label><input class="form-control" id="contactName" value="Carlos Solano"></div>
 <div class="form-group"><label>Telefono</label><input class="form-control" id="contactPhone" value="3001234567"></div>
 </div>
-<div class="btns"><button class="btn-cta" onclick="goStep(1)">&lt; Atras</button><button class="btn-cta" onclick="goStep(3)">Continuar &gt;</button></div>
+<div class="btns"><button class="btn-cta" onclick="goStep(1)">&lt; Atras</button><button id="btnContinue2" class="btn-cta" style="opacity:0.5; cursor:not-allowed;">Continuar &gt;</button></div>
 </div>
 
 <div id="step3" class="step">
@@ -87,14 +96,85 @@
 </div>
 </main>
 <script>
-let currentStep=1;const state={rooms:2,baths:1,parking:1};
-function goStep(n){currentStep=n;document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n).classList.add('active');document.getElementById('stepLabel').textContent='Paso '+n+' de 3';document.getElementById('progressFill').style.width=(n*33.33)+'%';if(n===3)updatePreview();}
-function inc(f){const el=document.getElementById(f);let v=parseInt(el.textContent);if(v<10){el.textContent=v+1;state[f]=v+1;}}
-function dec(f){const el=document.getElementById(f);let v=parseInt(el.textContent);if(v>0){el.textContent=v-1;state[f]=v-1;}}
-document.getElementById('typeChips').addEventListener('click',function(e){if(e.target.classList.contains('chip')){this.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));e.target.classList.add('active');}});
-document.querySelectorAll('#featureChips .chip,#sitesChips .chip').forEach(c=>{c.addEventListener('click',function(){this.classList.toggle('active');});});
-function generateDesc(){const a=document.getElementById('area').value||'85';const r=state.rooms;const b=state.baths;const addr=document.getElementById('address').value||'zona norte';const d=['Hermoso inmueble de '+a+'m2 con '+r+' habitaciones y '+b+' banos en '+addr+'. Acabados de primera, iluminacion natural y espacios funcionales.','Espectacular propiedad de '+a+'m2 en '+addr+'. '+r+' amplias habitaciones, '+b+' banos modernos. Cerca a colegios y parques.','Increible oportunidad: '+a+'m2, '+r+' hab, '+b+' banos en '+addr+'. Excelente distribucion y zona tranquila.'];document.getElementById('aiDesc').textContent=d[Math.floor(Math.random()*d.length)];}
-function updatePreview(){const p=document.getElementById('price').value;document.getElementById('prevPrice').textContent='$ '+Number(p||350000000).toLocaleString('es-CO');document.getElementById('prevAddress').textContent=document.getElementById('address').value||'Calle 100 #15-20';document.getElementById('prevRooms').textContent=state.rooms+' hab';document.getElementById('prevBaths').textContent=state.baths+' bano'+(state.baths>1?'s':'');document.getElementById('prevArea').textContent=(document.getElementById('area').value||'85')+' m2';document.getElementById('prevParking').textContent=state.parking+' parq';}
+var currentStep=1;var state={rooms:2,baths:1,parking:1};
+var descAccepted=false;
+
+function goStep(n){currentStep=n;document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});document.getElementById('step'+n).classList.add('active');document.getElementById('stepLabel').textContent='Paso '+n+' de 3';document.getElementById('progressFill').style.width=(n*33.33)+'%';if(n===3)updatePreview();if(n===2)updateContinueBtn();}
+function inc(f){var el=document.getElementById(f);var v=parseInt(el.textContent);if(v<10){el.textContent=v+1;state[f]=v+1;}}
+function dec(f){var el=document.getElementById(f);var v=parseInt(el.textContent);if(v>0){el.textContent=v-1;state[f]=v-1;}}
+document.getElementById('typeChips').addEventListener('click',function(e){if(e.target.classList.contains('chip')){this.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active');});e.target.classList.add('active');}});
+document.querySelectorAll('#featureChips .chip,#sitesChips .chip').forEach(function(c){c.addEventListener('click',function(){this.classList.toggle('active');});});
+
+function generateDesc(){var a=document.getElementById('area').value||'85';var r=state.rooms;var b=state.baths;var addr=document.getElementById('address').value||'zona norte';var d=['Hermoso inmueble de '+a+'m2 con '+r+' habitaciones y '+b+' banos en '+addr+'. Acabados de primera, iluminacion natural y espacios funcionales.','Espectacular propiedad de '+a+'m2 en '+addr+'. '+r+' amplias habitaciones, '+b+' banos modernos. Cerca a colegios y parques.','Increible oportunidad: '+a+'m2, '+r+' hab, '+b+' banos en '+addr+'. Excelente distribucion y zona tranquila.'];document.getElementById('aiDesc').textContent=d[Math.floor(Math.random()*d.length)];}
+
+function regenerateDesc(){
+  generateDesc();
+  descAccepted=false;
+  var card=document.getElementById('aiCard');
+  card.style.background='';card.style.border='';
+  document.getElementById('aiAcceptedMsg').style.display='none';
+  var container=document.getElementById('aiDescContainer');
+  container.innerHTML='<p id="aiDesc">'+document.getElementById('aiDesc').textContent+'</p>';
+  var btns=document.getElementById('aiCardButtons');
+  btns.innerHTML='<button class="btn-regenerar" onclick="regenerateDesc()">&#x21bb; Regenerar</button>'
+    +'<button onclick="editDesc()" style="background:white; color:#3e98cc; border:2px solid #3e98cc; padding:8px 20px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">&#9998; Editar</button>'
+    +'<button onclick="acceptDesc()" style="background:#28a745; color:white; border:none; padding:8px 20px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">&#10003; Aceptar descripcion</button>';
+  updateContinueBtn();
+}
+
+function acceptDesc(){
+  descAccepted=true;
+  var card=document.getElementById('aiCard');
+  card.style.background='#e6f9ed';
+  card.style.border='2px solid #28a745';
+  document.getElementById('aiAcceptedMsg').style.display='block';
+  var btns=document.getElementById('aiCardButtons');
+  btns.innerHTML='<button class="btn-regenerar" onclick="regenerateDesc()">&#x21bb; Regenerar otra</button>'
+    +'<button onclick="editDesc()" style="background:white; color:#3e98cc; border:2px solid #3e98cc; padding:8px 20px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">&#9998; Editar</button>';
+  updateContinueBtn();
+}
+
+function editDesc(){
+  var container=document.getElementById('aiDescContainer');
+  var currentText=document.getElementById('aiDesc')?document.getElementById('aiDesc').textContent:'';
+  container.innerHTML='<textarea id="aiDescEdit" style="width:100%; min-height:80px; border:1px solid #ced4da; border-radius:8px; padding:10px; font-size:14px; font-family:inherit; resize:vertical;" oninput="onDescEdit()">'+currentText+'</textarea>';
+  descAccepted=true;
+  var card=document.getElementById('aiCard');
+  card.style.background='#fff';card.style.border='2px solid #3e98cc';
+  document.getElementById('aiAcceptedMsg').style.display='none';
+  var btns=document.getElementById('aiCardButtons');
+  btns.innerHTML='<button class="btn-regenerar" onclick="regenerateDesc()">&#x21bb; Regenerar</button>'
+    +'<button onclick="confirmEdit()" style="background:#28a745; color:white; border:none; padding:8px 20px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">&#10003; Confirmar edicion</button>';
+  updateContinueBtn();
+}
+
+function onDescEdit(){
+  descAccepted=true;
+  updateContinueBtn();
+}
+
+function confirmEdit(){
+  var textarea=document.getElementById('aiDescEdit');
+  var text=textarea?textarea.value:'';
+  var container=document.getElementById('aiDescContainer');
+  container.innerHTML='<p id="aiDesc">'+text+'</p>';
+  acceptDesc();
+}
+
+function updateContinueBtn(){
+  var btn=document.getElementById('btnContinue2');
+  if(descAccepted){
+    btn.style.opacity='1';
+    btn.style.cursor='pointer';
+    btn.onclick=function(){goStep(3);};
+  }else{
+    btn.style.opacity='0.5';
+    btn.style.cursor='not-allowed';
+    btn.onclick=null;
+  }
+}
+
+function updatePreview(){var p=document.getElementById('price').value;document.getElementById('prevPrice').textContent='$ '+Number(p||350000000).toLocaleString('es-CO');document.getElementById('prevAddress').textContent=document.getElementById('address').value||'Calle 100 #15-20';document.getElementById('prevRooms').textContent=state.rooms+' hab';document.getElementById('prevBaths').textContent=state.baths+' bano'+(state.baths>1?'s':'');document.getElementById('prevArea').textContent=(document.getElementById('area').value||'85')+' m2';document.getElementById('prevParking').textContent=state.parking+' parq';}
 function publish(){document.getElementById('postPublish').style.display='block';document.getElementById('step3btns').style.display='none';document.querySelector('#step3 .alert-info').style.display='none';}
 </script>
 </body>
