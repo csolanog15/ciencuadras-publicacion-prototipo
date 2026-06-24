@@ -1,0 +1,10 @@
+<div class="publication-container">
+  <div class="progress-section"><p>Paso {{ currentStep() }} de {{ totalSteps }}</p></div>
+  @if (currentStep() === 1) {
+  <div class="step-content"><h2>Tipo de inmueble</h2>
+  <div class="chips">@for (type of [1,2,3,4,5,6,7]; track type) { <button class="chip" [class.active]="propertyType()===type" (click)="selectPropertyType(type)">{{ ['','Apto','Casa','Oficina','Local','Lote','Finca','Bodega'][type] }}</button> }</div>
+  <h2>Operacion</h2><div class="radio-group"><label><input type="radio" name="op" [checked]="transactionType()===1" (change)="transactionType.set(1)"> Venta</label><label><input type="radio" name="op" [checked]="transactionType()===2" (change)="transactionType.set(2)"> Arriendo</label></div>
+  <button class="btn-cta" (click)="nextStep()">Continuar</button></div>}
+  @if (currentStep() === 2) {<div class="step-content"><h2>Descripcion IA</h2><p>{{ description() }}</p><button (click)="generateAIDescription()">Regenerar</button><button class="btn-cta" (click)="nextStep()">Continuar</button></div>}
+  @if (currentStep() === 3) {<div class="step-content"><h2>Preview</h2><p>{{ address() }} - {{ rooms() }} hab</p><button class="btn-cta">Publicar</button></div>}
+</div>

@@ -1,0 +1,4 @@
+:host { display: block; }
+.publication-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.step-content { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
