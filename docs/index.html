@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Publicar Inmueble - Ciencuadras</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header"><div class="header-inner"><a href="#" class="logo">ciencuadras</a><nav class="nav-links"><a href="#">Compra</a><a href="#">Arriendo</a><a href="#">Tramites</a><button class="btn-publicar">&#9998; Publicar</button></nav></div></header>
+<main class="container">
+<div class="breadcrumb"><a href="#">&#8962; Inicio</a> &gt; <span>Publicar</span></div>
+<div class="progress-section"><p class="progress-label" id="stepLabel">Paso 1 de 3</p><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:33%"></div></div></div>
+
+<div id="step1" class="step active">
+<h2 class="section-title">Tipo de inmueble</h2>
+<p class="section-subtitle">Selecciona el tipo de propiedad</p>
+<div class="chips" id="typeChips">
+<button class="chip" data-type="1">Apartamento</button>
+<button class="chip" data-type="2">Casa</button>
+<button class="chip" data-type="3">Oficina</button>
+<button class="chip" data-type="4">Local</button>
+<button class="chip" data-type="5">Lote</button>
+<button class="chip" data-type="6">Finca</button>
+<button class="chip" data-type="7">Bodega</button>
+</div>
+<h2 class="section-title">Operacion</h2>
+<div class="radio-group">
+<label><input type="radio" name="operation" value="1" checked> Venta</label>
+<label><input type="radio" name="operation" value="2"> Arriendo</label>
+<label><input type="radio" name="operation" value="3"> Venta y Arriendo</label>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>Precio ($)</label><input class="form-control" type="number" id="price" placeholder="350000000"></div>
+<div class="form-group"><label>Area (m2)</label><input class="form-control" type="text" id="area" placeholder="85"></div>
+</div>
+<div class="form-group"><label>Direccion</label><input class="form-control" type="text" id="address" placeholder="Calle 100 #15-20, Bogota"></div>
+<div class="grid-3">
+<div><label style="font-size:14px;font-weight:600">Habitaciones</label><div class="stepper"><button onclick="dec('rooms')">-</button><span id="rooms">2</span><button onclick="inc('rooms')">+</button></div></div>
+<div><label style="font-size:14px;font-weight:600">Banos</label><div class="stepper"><button onclick="dec('baths')">-</button><span id="baths">1</span><button onclick="inc('baths')">+</button></div></div>
+<div><label style="font-size:14px;font-weight:600">Parqueaderos</label><div class="stepper"><button onclick="dec('parking')">-</button><span id="parking">1</span><button onclick="inc('parking')">+</button></div></div>
+</div>
+<div class="alert-info"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#3e98cc" stroke-width="1.5"/><text x="10" y="14" text-anchor="middle" font-size="12" fill="#3e98cc">i</text></svg><p>Las fotos se agregaran en el siguiente paso.</p></div>
+<div class="btns"><button class="btn-cta" onclick="goStep(2)">Continuar &gt;</button></div>
+</div>
+
+<div id="step2" class="step">
+<h2 class="section-title">Descripcion con IA</h2>
+<div class="ai-card"><h3 style="margin-bottom:8px">Descripcion generada</h3><p id="aiDesc">Haz clic en Regenerar para crear una descripcion atractiva.</p><button class="btn-regenerar" onclick="generateDesc()">&#x21bb; Regenerar</button></div>
+<h2 class="section-title">Caracteristicas</h2>
+<div class="chips" id="featureChips">
+<button class="chip">Ascensor</button><button class="chip">Piscina</button><button class="chip">Gimnasio</button><button class="chip">BBQ</button><button class="chip">Seguridad</button><button class="chip">Jardin</button><button class="chip">Balcon</button><button class="chip">Closets</button>
+</div>
+<h2 class="section-title">Sitios de interes</h2>
+<div class="chips" id="sitesChips">
+<button class="chip">Colegios</button><button class="chip">Hospitales</button><button class="chip">Parques</button><button class="chip">C. Comerciales</button><button class="chip">Transporte</button><button class="chip">Supermercados</button>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>Estrato</label><input class="form-control" id="stratum" value="4" readonly></div>
+<div class="form-group"><label>Administracion ($/mes)</label><input class="form-control" type="number" id="admin" placeholder="350000"></div>
+</div>
+<h2 class="section-title">Contacto</h2>
+<div class="grid-2">
+<div class="form-group"><label>Nombre</label><input class="form-control" id="contactName" value="Carlos Solano"></div>
+<div class="form-group"><label>Telefono</label><input class="form-control" id="contactPhone" value="3001234567"></div>
+</div>
+<div class="btns"><button class="btn-cta" onclick="goStep(1)">&lt; Atras</button><button class="btn-cta" onclick="goStep(3)">Continuar &gt;</button></div>
+</div>
+
+<div id="step3" class="step">
+<h2 class="section-title">Vista previa</h2>
+<div class="preview-card"><div class="preview-img">Vista previa de fotos</div><div class="preview-body"><p class="preview-price" id="prevPrice">$ 350,000,000</p><p class="preview-address" id="prevAddress">Calle 100 #15-20</p><div class="preview-features"><span id="prevRooms">2 hab</span><span id="prevBaths">1 bano</span><span id="prevArea">85 m2</span><span id="prevParking">1 parq</span></div></div></div>
+<div class="alert-info"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#3e98cc" stroke-width="1.5"/><text x="10" y="14" text-anchor="middle" font-size="12" fill="#3e98cc">i</text></svg><p>Al publicar, tu inmueble sera visible para miles de compradores en Ciencuadras.</p></div>
+<div class="btns" id="step3btns"><button class="btn-cta" onclick="goStep(2)">&lt; Atras</button><button class="btn-cta btn-success" onclick="publish()">&#10003; Publicar inmueble</button></div>
+<div id="postPublish" style="display:none">
+<div class="card" style="border-color:var(--cc-success);text-align:center"><h2 style="color:var(--cc-success)">&#10003; Publicado exitosamente</h2><p style="margin-top:8px;color:#666">Tu inmueble ya esta visible en Ciencuadras</p></div>
+<div class="post-cards"><div class="post-card"><h4>Compartir</h4><p>Redes sociales</p></div><div class="post-card"><h4>Editar</h4><p>Modificar publicacion</p></div><div class="post-card"><h4>Estadisticas</h4><p>Visitas y contactos</p></div><div class="post-card"><h4>Destacar</h4><p>Promocionar</p></div></div>
+</div>
+</div>
+</main>
+<script>
+let currentStep=1;const state={rooms:2,baths:1,parking:1};
+function goStep(n){currentStep=n;document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n).classList.add('active');document.getElementById('stepLabel').textContent='Paso '+n+' de 3';document.getElementById('progressFill').style.width=(n*33.33)+'%';if(n===3)updatePreview();}
+function inc(f){const el=document.getElementById(f);let v=parseInt(el.textContent);if(v<10){el.textContent=v+1;state[f]=v+1;}}
+function dec(f){const el=document.getElementById(f);let v=parseInt(el.textContent);if(v>0){el.textContent=v-1;state[f]=v-1;}}
+document.getElementById('typeChips').addEventListener('click',function(e){if(e.target.classList.contains('chip')){this.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));e.target.classList.add('active');}});
+document.querySelectorAll('#featureChips .chip,#sitesChips .chip').forEach(c=>{c.addEventListener('click',function(){this.classList.toggle('active');});});
+function generateDesc(){const a=document.getElementById('area').value||'85';const r=state.rooms;const b=state.baths;const addr=document.getElementById('address').value||'zona norte';const d=['Hermoso inmueble de '+a+'m2 con '+r+' habitaciones y '+b+' banos en '+addr+'. Acabados de primera, iluminacion natural y espacios funcionales.','Espectacular propiedad de '+a+'m2 en '+addr+'. '+r+' amplias habitaciones, '+b+' banos modernos. Cerca a colegios y parques.','Increible oportunidad: '+a+'m2, '+r+' hab, '+b+' banos en '+addr+'. Excelente distribucion y zona tranquila.'];document.getElementById('aiDesc').textContent=d[Math.floor(Math.random()*d.length)];}
+function updatePreview(){const p=document.getElementById('price').value;document.getElementById('prevPrice').textContent='$ '+Number(p||350000000).toLocaleString('es-CO');document.getElementById('prevAddress').textContent=document.getElementById('address').value||'Calle 100 #15-20';document.getElementById('prevRooms').textContent=state.rooms+' hab';document.getElementById('prevBaths').textContent=state.baths+' bano'+(state.baths>1?'s':'');document.getElementById('prevArea').textContent=(document.getElementById('area').value||'85')+' m2';document.getElementById('prevParking').textContent=state.parking+' parq';}
+function publish(){document.getElementById('postPublish').style.display='block';document.getElementById('step3btns').style.display='none';document.querySelector('#step3 .alert-info').style.display='none';}
+</script>
+</body>
+</html>
